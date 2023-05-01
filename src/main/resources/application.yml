@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/meu_banco_de_dados
+    username: meu_usuario
+    password: minha_senha
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        jdbc.batch_size: 50
+        show_sql: true
+        format_sql: true
+logging:
+  level:
+    root: info
+    org.springframework.web: debug
