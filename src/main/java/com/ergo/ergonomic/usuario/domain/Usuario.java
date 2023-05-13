@@ -1,6 +1,6 @@
 package com.ergo.ergonomic.usuario.domain;
 
-import com.ergo.ergonomic.usuario.domain.documento.Documento;
+import com.ergo.ergonomic.usuario.domain.documento.DocumentoBase;
 import com.ergo.ergonomic.usuario.domain.enums.StatusUsuario;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -33,7 +33,7 @@ public class Usuario {
     private String senha;
 
     @Embedded
-    private Documento documento;
+    private DocumentoBase documento;
 
     @Enumerated(EnumType.STRING)
     private StatusUsuario status = StatusUsuario.INATIVO;

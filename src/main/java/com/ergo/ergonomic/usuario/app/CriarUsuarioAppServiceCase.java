@@ -3,6 +3,7 @@ package com.ergo.ergonomic.usuario.app;
 import com.ergo.ergonomic.usuario.CriarUsuarioUseCase;
 import com.ergo.ergonomic.usuario.domain.Usuario;
 import com.ergo.ergonomic.usuario.domain.UsuarioDomainRepository;
+import com.ergo.ergonomic.usuario.domain.documento.DocumentoBase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,11 +22,16 @@ public class CriarUsuarioAppServiceCase implements CriarUsuarioUseCase {
                 command.getNome(),
                 command.getEmail(),
                 command.getSenha(),
-                command.getDocumento(),
+                getDocumento(command.getDocumento()),
                 command.getStatus()
         );
 
         // Salve o usuário no banco de dados
         return usuarioRepository.save(usuario);
     }
+
+    private DocumentoBase getDocumento(String documento) {
+        return new DocumentoBase(documento);
+    }
+
 }
