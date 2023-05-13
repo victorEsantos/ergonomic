@@ -16,7 +16,6 @@ public class CriarUsuarioAppServiceCase implements CriarUsuarioUseCase {
 
     @Override
     public Usuario execute(CriarUsuarioCommand command) {
-        // Crie uma instância do usuário com base nos dados do comando
         Usuario usuario = new Usuario(
                 UUID.randomUUID(),
                 command.getNome(),
@@ -26,7 +25,6 @@ public class CriarUsuarioAppServiceCase implements CriarUsuarioUseCase {
                 command.getStatus()
         );
 
-        // Salve o usuário no banco de dados
         return usuarioRepository.save(usuario);
     }
 
