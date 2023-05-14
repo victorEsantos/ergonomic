@@ -6,10 +6,15 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 @Getter
 @Setter
 @NoArgsConstructor
-public class DocumentoBase {
+public class DocumentoBase implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1526922768449817567L;
 
     @NonNull
     protected String numeroDocumento;

@@ -1,5 +1,6 @@
 package com.ergo.ergonomic.usuario.domain;
 
+import com.ergo.ergonomic.sk.domainentity.DomainEntity;
 import com.ergo.ergonomic.usuario.domain.documento.DocumentoBase;
 import com.ergo.ergonomic.usuario.domain.enums.StatusUsuario;
 import com.ergo.ergonomic.utils.Crypto;
@@ -13,12 +14,13 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class Usuario {
+public class Usuario extends DomainEntity {
     @Id
     private UUID id;
 
@@ -58,5 +60,33 @@ public class Usuario {
         }
 
         this.senha = Crypto.encrypt(novaSenha);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        Usuario usuario = (Usuario) o;
+
+        if (!Objects.equals(id, usuario.id)) return false;
+        if (!Objects.equals(nome, usuario.nome)) return false;
+        if (!Objects.equals(email, usuario.email)) return false;
+        if (!Objects.equals(senha, usuario.senha)) return false;
+        if (!Objects.equals(documento, usuario.documento)) return false;
+        return status == usuario.status;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (id != null ? id.hashCode() : 0);
+        result = 31 * result + (nome != null ? nome.hashCode() : 0);
+        result = 31 * result + (email != null ? email.hashCode() : 0);
+        result = 31 * result + (senha != null ? senha.hashCode() : 0);
+        result = 31 * result + (documento != null ? documento.hashCode() : 0);
+        result = 31 * result + (status != null ? status.hashCode() : 0);
+        return result;
     }
 }
