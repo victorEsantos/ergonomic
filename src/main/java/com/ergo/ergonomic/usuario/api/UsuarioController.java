@@ -3,10 +3,12 @@ package com.ergo.ergonomic.usuario.api;
 import com.ergo.ergonomic.usuario.AlterarUsuarioUsecase;
 import com.ergo.ergonomic.usuario.AlterarUsuarioUsecase.AlterarUsuarioCommand;
 import com.ergo.ergonomic.usuario.CriarUsuarioUseCase;
+import com.ergo.ergonomic.usuario.GetAllUsuarioUseCase;
 import com.ergo.ergonomic.usuario.GetByIdUsuarioUseCase;
 import com.ergo.ergonomic.usuario.UsuarioAlterarSenhaUseCase;
 import com.ergo.ergonomic.usuario.UsuarioAlterarSenhaUseCase.UsuarioAlterarSenhaCommand;
 import com.ergo.ergonomic.usuario.api.dto.UsuarioDto;
+import com.ergo.ergonomic.usuario.domain.Usuario;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,7 +34,7 @@ public class UsuarioController {
     private final AlterarUsuarioUsecase alterarUsuario;
     private final UsuarioAlterarSenhaUseCase usuarioAlterarSenha;
     private final GetByIdUsuarioUseCase getByIdUsuarioUseCase;
-
+    private final GetAllUsuarioUseCase getAllUsuarioUseCase;
 
 
     @PostMapping()
@@ -67,6 +71,13 @@ public class UsuarioController {
         var usuario = getByIdUsuarioUseCase.getById(id);
         UsuarioDto usuarioDto = new UsuarioDto();
         BeanUtils.copyProperties(usuario, usuarioDto);
+        return ResponseEntity.ok(usuarioDto);
+    }
+
+    @GetMapping()
+    public ResponseEntity<Set<UsuarioDto>> getAll() {
+        Set<Usuario> usuarios = getAllUsuarioUseCase.getAll();
+        Set<UsuarioDto> usuarioDto = usuarios.stream().map(UsuarioDto::from).collect(Collectors.toSet());
         return ResponseEntity.ok(usuarioDto);
     }
 
