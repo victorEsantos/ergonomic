@@ -9,8 +9,13 @@ import com.ergo.ergonomic.usuario.UsuarioAlterarSenhaUseCase;
 import com.ergo.ergonomic.usuario.UsuarioAlterarSenhaUseCase.UsuarioAlterarSenhaCommand;
 import com.ergo.ergonomic.usuario.api.dto.UsuarioDto;
 import com.ergo.ergonomic.usuario.domain.Usuario;
+import com.ergo.ergonomic.usuario.domain.enums.StatusUsuario;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,13 +23,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -75,10 +80,18 @@ public class UsuarioController {
     }
 
     @GetMapping()
-    public ResponseEntity<Set<UsuarioDto>> getAll() {
-        Set<Usuario> usuarios = getAllUsuarioUseCase.getAll();
-        Set<UsuarioDto> usuarioDto = usuarios.stream().map(UsuarioDto::from).collect(Collectors.toSet());
-        return ResponseEntity.ok(usuarioDto);
+    public ResponseEntity<Page<UsuarioDto>> getAll(
+            @RequestParam(required = false) String nome,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) StatusUsuario status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Usuario> usuarios = getAllUsuarioUseCase.getAll(nome, email, status, pageable);
+        List<UsuarioDto> usuarioDto = usuarios.stream().map(UsuarioDto::from).toList();
+        return ResponseEntity.ok(new PageImpl<>(usuarioDto));
     }
 
 }
