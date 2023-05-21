@@ -8,9 +8,11 @@ import com.ergo.ergonomic.usuario.GetByIdUsuarioUseCase;
 import com.ergo.ergonomic.usuario.UsuarioAlterarSenhaUseCase;
 import com.ergo.ergonomic.usuario.UsuarioAlterarSenhaUseCase.UsuarioAlterarSenhaCommand;
 import com.ergo.ergonomic.usuario.api.dto.UsuarioDto;
+import com.ergo.ergonomic.usuario.api.specification.UsuarioSpecifications;
 import com.ergo.ergonomic.usuario.domain.Usuario;
 import com.ergo.ergonomic.usuario.domain.enums.StatusUsuario;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -81,15 +83,13 @@ public class UsuarioController {
 
     @GetMapping()
     public ResponseEntity<Page<UsuarioDto>> getAll(
-            @RequestParam(required = false) String nome,
-            @RequestParam(required = false) String email,
-            @RequestParam(required = false) StatusUsuario status,
+            @ParameterObject UsuarioSpecifications spec,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
-        Page<Usuario> usuarios = getAllUsuarioUseCase.getAll(nome, email, status, pageable);
+        Page<Usuario> usuarios = getAllUsuarioUseCase.getAll(spec, pageable);
         List<UsuarioDto> usuarioDto = usuarios.stream().map(UsuarioDto::from).toList();
         return ResponseEntity.ok(new PageImpl<>(usuarioDto));
     }
