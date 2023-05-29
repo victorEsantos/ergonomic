@@ -1,7 +1,7 @@
 package com.ergo.ergonomic.usuario.api.specification;
 
+import com.ergo.ergonomic.usuario.domain.Role;
 import com.ergo.ergonomic.usuario.domain.Usuario;
-import com.ergo.ergonomic.usuario.domain.enums.StatusUsuario;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,7 +20,7 @@ public class UsuarioSpecifications {
     private String email;
 
     @Schema(description = "Status do usuário")
-    private StatusUsuario status;
+    private Role role;
 
 
     public Specification<Usuario> execute() {
@@ -34,8 +34,8 @@ public class UsuarioSpecifications {
             spec = spec.and(UsuarioSpecifications.porEmail(email));
         }
 
-        if (status != null) {
-            spec = spec.and(UsuarioSpecifications.porStatus(status));
+        if (role != null) {
+            spec = spec.and(UsuarioSpecifications.porStatus(role));
         }
 
         return spec;
@@ -50,7 +50,7 @@ public class UsuarioSpecifications {
         return (root, query, builder) -> builder.like(builder.lower(root.get("email")), "%" + email.toLowerCase() + "%");
     }
 
-    private static Specification<Usuario> porStatus(StatusUsuario status) {
-        return (root, query, builder) -> builder.equal(root.get("status"), status);
+    private static Specification<Usuario> porStatus(Role role) {
+        return (root, query, builder) -> builder.equal(root.get("role"), role);
     }
 }

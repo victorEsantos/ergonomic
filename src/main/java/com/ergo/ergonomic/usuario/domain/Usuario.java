@@ -1,104 +1,90 @@
 package com.ergo.ergonomic.usuario.domain;
 
-import com.ergo.ergonomic.sk.domainentity.DomainEntity;
-import com.ergo.ergonomic.usuario.domain.documento.DocumentoBase;
-import com.ergo.ergonomic.usuario.domain.enums.StatusUsuario;
-import com.ergo.ergonomic.utils.Crypto;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
+import com.ergo.ergonomic.usuario.token.Token;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import lombok.AccessLevel;
-import lombok.Getter;
+import jakarta.persistence.OneToMany;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.Collection;
+import java.util.List;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
-public class Usuario extends DomainEntity {
-    @Id
-    private UUID id;
+public class Usuario implements UserDetails {
 
-    @Column(nullable = false)
-    private String nome;
+  @Id
+  @GeneratedValue
+  private Integer id;
+  private String nome;
+  private String email;
+  private String password;
+  private String cnpj;
+  private String cpf;
 
-    @Column(nullable = false, unique = true)
-    private String email;
+  @Enumerated(EnumType.STRING)
+  private Role role;
 
-    @Column(nullable = false)
-    private String senha;
+  @OneToMany(mappedBy = "usuario")
+  @ToString.Exclude
+  private List<Token> tokens;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "usuario_papeis",
-            joinColumns = @JoinColumn(name = "usuario_id"),
-            inverseJoinColumns = @JoinColumn(name = "papel_id"))
-    private Set<Papeis> papeis = new HashSet<>();
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    return role.getAuthorities();
+  }
 
-    @Embedded
-    private DocumentoBase documento;
+  @Override
+  public String getPassword() {
+    return password;
+  }
 
-    @Enumerated(EnumType.STRING)
-    private StatusUsuario status = StatusUsuario.INATIVO;
+  @Override
+  public String getUsername() {
+    return email;
+  }
 
-    public Usuario(UUID id, String nome, String email, String senha, DocumentoBase documento, StatusUsuario status) {
-        this.id = id;
-        this.nome = nome;
-        this.email = email;
-        this.senha = Crypto.encrypt(senha);
-        this.documento = documento;
-        this.status = status;
-    }
+  @Override
+  public boolean isAccountNonExpired() {
+    return true;
+  }
 
-    public void alterar(String nome, String email, String documento) {
-        this.nome = nome;
-        this.email = email;
-        this.documento = new DocumentoBase(documento);
-    }
+  @Override
+  public boolean isAccountNonLocked() {
+    return true;
+  }
 
-    public void alterarSenha(String senhaAntiga, String novaSenha) {
-        if (!Crypto.checkPassword(senhaAntiga, this.senha)) {
-            throw new IllegalArgumentException("Senha antiga inválida");
-        }
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return true;
+  }
 
-        this.senha = Crypto.encrypt(novaSenha);
-    }
+  @Override
+  public boolean isEnabled() {
+    return true;
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+  public void alterar(String nome, String email, String cnpj, String cpf) {
+    this.nome = nome;
+    this.email = email;
+    this.cnpj = cnpj;
+    this.cpf = cpf;
+  }
 
-        Usuario usuario = (Usuario) o;
-
-        if (!Objects.equals(id, usuario.id)) return false;
-        if (!Objects.equals(nome, usuario.nome)) return false;
-        if (!Objects.equals(email, usuario.email)) return false;
-        if (!Objects.equals(senha, usuario.senha)) return false;
-        if (!Objects.equals(documento, usuario.documento)) return false;
-        return status == usuario.status;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (id != null ? id.hashCode() : 0);
-        result = 31 * result + (nome != null ? nome.hashCode() : 0);
-        result = 31 * result + (email != null ? email.hashCode() : 0);
-        result = 31 * result + (senha != null ? senha.hashCode() : 0);
-        result = 31 * result + (documento != null ? documento.hashCode() : 0);
-        result = 31 * result + (status != null ? status.hashCode() : 0);
-        return result;
-    }
+  public void alterarSenha(String novaSenha) {
+    this.password = novaSenha;
+  }
 }

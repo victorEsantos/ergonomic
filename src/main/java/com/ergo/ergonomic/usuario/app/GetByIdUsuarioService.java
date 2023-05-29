@@ -5,8 +5,6 @@ import com.ergo.ergonomic.usuario.domain.Usuario;
 import com.ergo.ergonomic.usuario.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 @Service
 public class GetByIdUsuarioService implements GetByIdUsuarioUseCase {
 
@@ -17,7 +15,7 @@ public class GetByIdUsuarioService implements GetByIdUsuarioUseCase {
     }
 
     @Override
-    public Usuario getById(UUID id) {
+    public Usuario getById(Integer id) {
         return usuarioRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
     }

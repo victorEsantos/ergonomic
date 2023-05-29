@@ -1,11 +1,10 @@
 package com.ergo.ergonomic.usuario;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.UUID;
 
 public interface UsuarioAlterarSenhaUseCase {
     void alterarSenha(UsuarioAlterarSenhaCommand command);
@@ -16,7 +15,8 @@ public interface UsuarioAlterarSenhaUseCase {
     @Setter
     @Getter
     class UsuarioAlterarSenhaCommand {
-        UUID id;
+        @JsonIgnore
+        Integer id;
         String senhaAntiga;
         String novaSenha;
     }

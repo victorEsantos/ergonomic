@@ -19,7 +19,7 @@ public class AlterarUsuarioService implements AlterarUsuarioUsecase {
         Usuario usuarioExistente = usuarioRepository.findById(cmd.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
 
-        usuarioExistente.alterar(cmd.getNome(), cmd.getEmail(), cmd.getDocumento());
+        usuarioExistente.alterar(cmd.getNome(), cmd.getEmail(), cmd.getCnpj(), cmd.getCpf());
 
         return usuarioRepository.save(usuarioExistente);
     }

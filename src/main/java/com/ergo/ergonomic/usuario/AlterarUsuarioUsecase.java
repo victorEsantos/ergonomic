@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.UUID;
-
 public interface AlterarUsuarioUsecase {
     Usuario alterarUsuario(AlterarUsuarioCommand command);
 
@@ -16,10 +14,11 @@ public interface AlterarUsuarioUsecase {
     @Setter
     @Getter
     class AlterarUsuarioCommand {
-        private UUID id;
+        private Integer id;
         private String nome;
         private String email;
-        private String documento;
+        private String cnpj;
+        private String cpf;
 
     }
 
