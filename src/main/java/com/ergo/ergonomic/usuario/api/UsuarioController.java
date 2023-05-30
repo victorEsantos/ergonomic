@@ -51,6 +51,7 @@ public class UsuarioController {
 
 
     @PutMapping("/{id}/alterarSenha")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or principal.getId() == #id")
     public ResponseEntity<Void> alterarSenha(@PathVariable Integer id, @RequestBody UsuarioAlterarSenhaCommand command) {
 
         command.setId(id);
@@ -61,6 +62,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or principal.getId() == #id")
     public ResponseEntity<UsuarioDto> getById(@PathVariable Integer id) {
         var usuario = getByIdUsuarioUseCase.getById(id);
         UsuarioDto usuarioDto = new UsuarioDto();
@@ -69,6 +71,7 @@ public class UsuarioController {
     }
 
     @GetMapping()
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Page<UsuarioDto>> getAll(
             @ParameterObject UsuarioSpecifications spec,
             @RequestParam(defaultValue = "0") int page,
