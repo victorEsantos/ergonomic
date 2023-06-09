@@ -17,6 +17,6 @@ public class GetByIdUsuarioService implements GetByIdUsuarioUseCase {
     @Override
     public Usuario getById(Integer id) {
         return usuarioRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
+                .orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado"));
     }
 }
